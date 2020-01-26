@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script><!--connect to jquery-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"><!--connect to bootstrap-->
+
+</head>
+<style>
+/*adding style here*/
+.dashboard{ background-color: black;color:white}
+#search{background-color:green;color:yellow}
+#magnifying-glass{
+    font-size:5em;
+    display:inline-block;
+    position:relative;
+    width: 0.4em;
+    height:0.4em;
+    border:0.1em solid black;
+    border-radius:0.35em;
+        
+    }
+    #magnifying-glass::before {
+        content:"";
+        display:inline-block;
+        background:black;
+        width:0.3em;
+        height:0.08em;
+        border-width:0;
+        position:absolute;
+        right:-0.25em;
+        bottom:-0.1em;
+        transform:rotate(45deg)
+    }
+ #searchbutton{
+        size:50px;
+        height:55px;
+        width:60px;
+        background-color:yellow;
+    }
+    .col-md-9{
+        border:solid green 10px;
+        height:50vw;
+    }
+    .five{
+        border: solid green 10px;
+     
+       
+    }
+    #uvindex{
+        background-color: red;
+    }
+    .col-md-2{
+        background-color:blue;
+        border: solid black;
+      
+       
+    }
+</style>
+
+   
+
+
+
+<body>
+    <!--input the webpage structure here-->
+
+    <!--title area////////////////////////////////////////////////////////////////////////////////////////-->
+    <div class="container">
+        <div class="row dashboard">
+        <h1>weather dashboard</h1>
+    <!--searching area ////////////////////////////////////////////////////////////////////////////////////////-->
+        </div>
+        <div class="row content">
+          
+        <div class="col-md-3">
+          <div class="search">
+            <p id="search">Search by the name of the city</p><!--title-->
+              <input id="input" placeholder="input your city here" ></input><!--input box-->
+              
+              <button type="submit" class="searchbutton" >
+                  <i id="magnifying-glass"></i>
+              </button>
+              <br>
+              <br>
+              <br>
+    <!--button area////////////////////////////////////////////////////////////////////////////////////////-->
+                <ul class="list">
+                <button class="Button" value="Shanghai">Shanghai</button>
+                <br>
+                <button class="Button" value="New York">New York</button>
+                <br>
+                <button class="Button" value="Saint Paul">St Paul</button>
+                <br>
+                <button class="Button" value="London">London</button>
+                <br>
+                <button class="Button" value="Berlin">Berlin</button>
+                <br>
+                <button class="Button" value="Paris">Paris</button>
+                <br>
+                <button class="Button" value=Rome>Rome</button>
+                <br>
+                <button class="Button" value=Sydney>Sydney</button>
+                </ul>
+          </div>
+        </div> 
+    <!--Major information display area/////////////////////////////////////////////////////////////////////-->       
+         <div class="col-md-9">
+            
+            <p id="city" ></p> 
+            <p id="forecast"></p>
+            <p id="humidity"></p>
+            <p id="windspeed"></p>
+            <div id="uvindex"></div> 
+            
+    <!--five day forecast information display//////////////////////////////////////////////////////////////////-->
+    <div class="row five"></div>     
+    <div class="row">
+            <p id="title"></p>
+         </div> 
+          <div class="row" id="fiveday">
+            <div class="col-md-1">
+            </div>
+            <div class="col-md-2" >
+               <p id="date1"></p>
+               <p id="future1"></p>
+               <p id="humid1"></p>
+            </div>
+            <div class="col-md-2">
+                <p id="date2"></p>
+                <p id="future2"></p>
+                <p id="humid2"></p>
+            </div>
+            <div class="col-md-2">
+                <p id="date3"></p>
+                <p id="future3"></p>
+                <p id="humid3"></p>
+            </div>
+            <div class="col-md-2">
+                <p id="date4"></p>
+                <p id="future4"></p>
+                <p id="humid4"></p>
+            </div>
+            <div class="col-md-2">
+                <p id="date5"></p>
+                <p id="future5"></p>
+                <p id="humid5"></p>
+            </div>
+            <div class="col-md-1">
+            </div>
+            
+         </div>
+            
+        </div>
+            
+         
+        </div>
+        </div>
+   
+
+</body>
+
+
+
+
+
+<script>
+//input jquery code here
+var i;
+var city;   //creating the variable for using
+var key="706e9de092c1e5685e4d786b32619b89"    //the key for access the API
+var longitude;
+var latitude;
+var uvindex;   
+var Jacob;
+var weather;
+var city;
+var Fahrenheit;
+var humidity;
+var windspeed;
+var month1;
+var month2;
+var day1;
+var day2;
+var futuretemp
+var dateinfo
+var year
+var futurehumidity
+
+for (i=0; i<8; i++)   
+{
+var button=$(".Button");
+$(button[i]).css({"color":"yellow","background-color":"green","width":"200px","height":"30px","left":"5px","position":"absolute"});
+}
+
+
+//the function of clicking the button
+$(".Button").on("click",function(){
+
+ city=($(this).val())
+$("#input").val(city)})
+$(".searchbutton").on("click",function(){
+    $("#title").text("5-day Forecast:")
+    $("#title").css({"font-size":"30px","color":"yellow"})
+    city=($("#input").val().trim());
+ $.ajax({  
+    url: "http://api.openweathermap.org/data/2.5/forecast?", 
+    dataType: 'json',
+    type: 'GET',       
+    data: {q:city,appid:key,units:'metric'},  
+    }).then(function(response) {     
+    Jacob=(response)
+       
+       $("#forecast").empty()
+       $("#city").empty()
+       $("#humidity").empty()
+       $("#windspeed").empty()
+      
+       weather=$("<p>");
+       weather=(response.list[0].main.temp);
+       city=$("<h2>"),
+       city=(response.city.name);
+       dateinfo=$("<p>")
+       futuretemp=$("<p>")
+       futurehumidity=$("<p>")
+       Fahrenheit=(weather*(9/5)+32).toFixed(1);
+       humidity=(response.list[0].main.humidity);
+       windspeed=(response.list[0].wind.speed);
+       longitude=(response.city.coord.lon);
+       latitude=(response.city.coord.lat);
+      for(var i=4; i<40; i+= 8){
+       year=((response.list[i].dt_txt[0])+(response.list[i].dt_txt[1])+(response.list[i].dt_txt[2])+(response.list[i].dt_txt[3]))
+       //alert(year);
+       month1=(response.list[i].dt_txt[5])
+       month2=(response.list[i].dt_txt[6])
+       day1=(response.list[i].dt_txt[8])
+       day2=(response.list[i].dt_txt[9])
+       futuretemp[i]=(response.list[i].main.temp);
+       futurehumidity[i]=(response.list[i].main.humidity);
+       //alert(month1+month2+"and"+day1+day2+"future temp"+(futuretemp*(9/5)+32).toFixed(1)+ "   humidity:"+ humidity);
+       dateinfo[i]=(month1+month2+ " / "+day1+day2+ "/" +year)
+       
+      }
+      //////////////////////////////////////////////////////
+      $("#date1").append("date: "+dateinfo[4])
+      $("#date2").append("date: "+dateinfo[12])
+      $("#date3").append("date: "+dateinfo[20])
+      $("#date4").append("date: "+dateinfo[28])
+      $("#date5").append("date: "+dateinfo[36])
+      $("#future1").append("temp: " + (futuretemp[4]*(9/5)+32).toFixed(1)+ " Fahrenheit")
+      $("#future2").append("temp: " + (futuretemp[12]*(9/5)+32).toFixed(1)+ " Fahrenheit")
+      $("#future3").append("temp: " + (futuretemp[20]*(9/5)+32).toFixed(1)+ " Fahrenheit")
+      $("#future4").append("temp: " + (futuretemp[28]*(9/5)+32).toFixed(1)+ " Fahrenheit")
+      $("#future5").append("temp: " + (futuretemp[36]*(9/5)+32).toFixed(1)+ " Fahrenheit")
+      $("#humid1").append("humidity: " +  futurehumidity[4] + " %")
+      $("#humid2").append("humidity: " +  futurehumidity[12] + " %")
+      $("#humid3").append("humidity: " +  futurehumidity[20] + " %")
+      $("#humid4").append("humidity: " +  futurehumidity[28] + " %")
+      $("#humid5").append("humidity: " +  futurehumidity[36] + " %")
+      
+
+      
+       
+      
+       $("#forecast").append("the current temperature there is " +weather + " Celsius, and " +Fahrenheit + " Fahrenheit" )
+       $("#city").append(city);
+       $("#city").css({"font-size":"50px","color":"yellow"})
+       $("#humidity").append("humidity: "+ humidity +" %")
+       $("#windspeed").append("windspeed"+windspeed +" MPH")
+    
+   
+    
+      
+     })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      })
+
+
+</script>
+</html>
